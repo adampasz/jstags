@@ -5,12 +5,44 @@ var fs      = require('fs')
   , visit   = require('estraverse').traverse
   ;
 
+function CTagsEntry (name, file, address, type, lineno) {
+	this.name = name;
+	this.file = file;
+	this.address = address;
+	this.type = type;
+	this.lineno = lineno;
+}
+
+CTagsEntry.prototype.toString = function () {
+	return [
+		this.name,
+		this.file,
+		this.address,
+		this.type,
+		'lineno:' + this.lineno
+	].join('\t');
+}
+
+CTagsEntry.prototype.compare = function (a, b) {
+	if (a == b) return 0;
+	if (a < b) return -1;
+	return 1;
+}
+
+var tags = [];
+
 function requireTag(filename, node) {
   var name = node.id.name;
   var startLine = node.loc.start.line - 1;
   var pattern = startLine + '/\\<' + node.id.name + '\\>/;"';
 
-  return [name, filename, pattern, 'i', 'lineno:' + (startLine + 1)].join('\t');
+  return new CTagsEntry(
+			name,
+		 	filename,
+		 	pattern,
+		 	'i',
+		 	(startLine + 1)
+	);
 }
 
 function isRequire(node) {
@@ -42,7 +74,7 @@ function methodTags(filename, node, object) {
       var startLine = property.key.loc.start.line - 1;
       var pattern = startLine + '/\\<' + property.key.name + '\\>/;"';
 
-      console.log([name, filename, pattern, 'm', 'lineno:' + (startLine + 1)].join('\t'));
+      tags.push(new CTagsEntry(name, filename, pattern, 'm', 'lineno:' + (startLine + 1)));
     }
   });
 }
@@ -53,7 +85,7 @@ function functionTag(filename, node) {
   var pattern = startLine + '/\\<' + node.id.name + '\\>/;"';
   var type = (name[0] === name[0].toUpperCase()) ? 'c' : 'f';
 
-  return [name, filename, pattern, type, 'lineno:' + (startLine + 1)].join('\t');
+  return new CTagsEntry(name, filename, pattern, type, 'lineno:' + (startLine + 1));
 }
 
 var nodeVisitors = {
@@ -62,12 +94,12 @@ var nodeVisitors = {
 
     var target;
     if (isRequire(node.init)) {
-      console.log(requireTag(filename, node));
+      tags.push(requireTag(filename, node));
     }
     else if (node.init.type === 'MemberExpression') {
       target = objectFromMemberExpression(node);
       if (isRequire(target)) {
-        console.log(requireTag(filename, node));
+        tags.push(requireTag(filename, node));
       }
     }
     else if (node.init.type === 'AssignmentExpression') {
@@ -78,7 +110,7 @@ var nodeVisitors = {
     }
   },
   'FunctionDeclaration' : function (filename, node) {
-    console.log(functionTag(filename, node));
+    tags.push(functionTag(filename, node));
   }
 };
 
@@ -110,6 +142,10 @@ module.exports = function tagFiles(filenames) {
 
       var ast = esprima.parse(source, {loc : true});
       visit(ast, visitor(filename));
+
+			tags.sort(CTagsEntry.compare).forEach(function (tag) {
+				console.log(tag.toString());
+			});
     });
   });
 };

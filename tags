@@ -1,0 +1,17 @@
+!_TAG_FILE_FORMAT	2	/extended format/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Forrest L Norvell	/ogd@aoaioxxysz.net/
+!_TAG_PROGRAM_NAME	jstags	//
+!_TAG_PROGRAM_URL	http://github.com/othiym23/jstags	/github repository/
+!_TAG_PROGRAM_VERSION	0.0.0	//
+fs	index.js	2/\<fs\>/;"	i	lineno:3
+esprima	index.js	3/\<esprima\>/;"	i	lineno:4
+visit	index.js	4/\<visit\>/;"	i	lineno:5
+requireTag	index.js	7/\<requireTag\>/;"	f	lineno:8
+isRequire	index.js	15/\<isRequire\>/;"	f	lineno:16
+isObjectExpression	index.js	23/\<isObjectExpression\>/;"	f	lineno:24
+objectFromMemberExpression	index.js	28/\<objectFromMemberExpression\>/;"	f	lineno:29
+methodTags	index.js	37/\<methodTags\>/;"	f	lineno:38
+functionTag	index.js	49/\<functionTag\>/;"	f	lineno:50
+visitor	index.js	84/\<visitor\>/;"	f	lineno:85
+header	index.js	94/\<header\>/;"	f	lineno:95
