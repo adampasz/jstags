@@ -1,7 +1,7 @@
 'use strict';
 
 var fs      = require('fs')
-  , esprima = require('esprima')
+  , esprima = require('esprima-fb')
   , visit   = require('estraverse').traverse
   ;
 
